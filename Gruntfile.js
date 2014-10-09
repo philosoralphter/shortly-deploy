@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       dist: {
-        src: ['public/**/*.js']
+        src: ['public/**/*.js'],
         dest: 'public/dist/<%= pkg.name %>.js'
       }
     },
@@ -28,12 +28,17 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      dist: {
+        files: {
+          'public/dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+        }
+      }
     },
 
     jshint: {
       files: [
         // Add filespec list here
-        '*/**/*.js'
+        '*.js'
       ],
       options: {
         force: 'true',
@@ -67,6 +72,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push origin master'
       }
     },
   });
@@ -112,9 +118,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
-
+  grunt.registerTask('deploy', ['jshint', 'concat', 'uglify']);
 
 };
