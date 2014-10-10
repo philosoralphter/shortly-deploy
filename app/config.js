@@ -3,38 +3,15 @@ var mongoose = require('mongoose');
 var path = require('path');
 var bcrypt = require('bcrypt-nodejs');
 
-var db = mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://localhost/test');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log('Mongoose Connected')
 });
 
-var urlSchema = mongoose.Schema({
-  url: String,
-  base_url: String,
-  code: String,
-  title: String,
-  visits: Number
-});
-
-var userSchema = mongoose.Schema({
-  username: String,
-  password: String
-});
-
-userSchema.methods.comparePassword = function(attemptedPassword, callback) {
-   bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
-    callback(isMatch);
-  });
-};
-
-userSchema.methods.hashPassword = function() {
-   var cipher = Promise.promisify(bcrypt.hash);
-   return cipher(this.get('password'), null, null).bind(this)
-   .then(function(hash) {
-    this.set('password', hash);
-  });
- }
-
+module.exports = db;
 
 
 
@@ -79,4 +56,4 @@ userSchema.methods.hashPassword = function() {
 //   }
 // });
 
-module.exports = db;
+
